@@ -1,7 +1,13 @@
 #include "HX711.h"
 
+//Create An LCD Object. Signals: [ RS, EN, D4, D5, D6, D7 ]
+// RW -> gnd
+
+
 #include <LiquidCrystal.h> // Add LiquidCrystal library
 LiquidCrystal lcd(6, 7, 2, 3, 4, 5); // creation of object LCD
+
+
 
 const int DOUT=A1;
 const int CLK=A0;
@@ -24,7 +30,7 @@ lcd.print("BALANZA");
 lcd.setCursor(0,1);
 lcd.print("Destarando...");
 balanza.set_scale(371.55); // Establecemos la escala
-delay(10);
+delay(5000);
 balanza.tare();  //El peso actual es considerado Tara.
 lcd.clear(); // Erase screen
 lcd.setCursor(1,0);
@@ -44,7 +50,7 @@ peso_total=0;
  {
   peso=balanza.get_units();
   peso_total+=peso;
-  delay(500);
+  delay(100);
   Serial.println(i);
  }
  peso_total=peso_total/10.0;
@@ -59,6 +65,7 @@ lcd.setCursor(9,1);
 lcd.print(peso_total/460.0);
 lcd.print(" lbs");
 
+delay(5000); 
 delay(5000); 
 
 
