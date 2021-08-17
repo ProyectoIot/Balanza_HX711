@@ -23,7 +23,7 @@ Serial.println(balanza.read());
 lcd.print("BALANZA");
 lcd.setCursor(0,1);
 lcd.print("Destarando...");
-balanza.set_scale(377.14); // Establecemos la escala
+balanza.set_scale(371.55); // Establecemos la escala
 delay(10);
 balanza.tare();  //El peso actual es considerado Tara.
 lcd.clear(); // Erase screen
