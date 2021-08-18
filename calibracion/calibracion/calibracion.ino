@@ -3,6 +3,9 @@
 // Pin de datos y de reloj
 byte pinData = 3;
 byte pinClk = 2;
+ int z=1; // condicion de lectura de peso 
+ int peso_cal=0;
+ int r=1;
  
 HX711 bascula;
  
@@ -14,8 +17,7 @@ void setup() {
   Serial.println("HX711 programa de calibracion");
   Serial.println("Quita cualquier peso de la bascula");
   Serial.println("Una vez empiece a mostrar informacion de medidas, coloca un peso conocido encima de la bascula");
-  Serial.println("Presiona + para incrementar el factor de calibracion");
-  Serial.println("Presiona - para disminuir el factor de calibracion");
+  
  
   // Iniciar sensor
   bascula.begin(A1, A0);
@@ -31,28 +33,65 @@ void setup() {
   // Mostrar la primera desviación
   Serial.print("Zero factor: ");
   Serial.println(zero_factor);
+  delay (1000);
+  Serial.print("Introduzca el peso de calibracion ");
+
+  while (z==1)
+  while(Serial.available())
+  {
+   peso_cal=Serial.parseInt();
+  z=0;
+  }
+  Serial.print ("Peso introducido  ");
+  Serial.println (peso_cal);
+  delay(3000);
 }
  
 void loop() {
- 
+
+ while (r==1)
+ {
   // Aplicar calibración
   bascula.set_scale(factor_calibracion);
  
   // Mostrar la información para ajustar el factor de calibración
   Serial.print("Leyendo: ");
-  Serial.print(bascula.get_units(), 1);
-  Serial.print(" g");
+  float peso=bascula.get_units();
+  Serial.print(peso, 1);
+  Serial.print(" g ");
+  Serial.print(peso_cal);
+  Serial.print(" g ");
   Serial.print(" factor_calibracion: ");
   Serial.print(factor_calibracion);
   Serial.println();
  
   // Obtener información desde el monitor serie
-  if (Serial.available())
+  if ((peso+0.001*peso_cal)<= peso_cal || (peso-0.001*peso_cal)>= peso_cal)
   {
-    char temp = Serial.read();
-    if (temp == '+')
-      factor_calibracion += 0.05;
-    else if (temp == '-')
-      factor_calibracion -= 0.05;
+     if (peso_cal<= peso)
+        {
+          factor_calibracion += 0.2;
+        }
+     if (peso_cal>= peso)
+        {
+          factor_calibracion -= 0.2;
+        }
   }
+  else 
+  {
+    r=0;
+    Serial.println ("Calibracion terminada ...");
+    Serial.print ("Factor de calibracion: ");
+    Serial.println (factor_calibracion);
+  }
+  delay (5000);
+ }
+//  if (Serial.available())
+//  {
+//    char temp = Serial.read();
+//    if (temp == '+')
+//      factor_calibracion += 0.05;
+//    else if (temp == '-')
+//      factor_calibracion -= 0.05;
+//  }
 }
